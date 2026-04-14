@@ -1,0 +1,216 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Pulse of the Sky - Page 3: The Interactive Weather Lab</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #e0e0e0; background: linear-gradient(135deg, #0a0a23 0%, #1a1a3e 50%, #000428 100%); background-attachment: fixed; overflow-x: hidden; position: relative; }
+        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 40% 40%, rgba(120,119,198,0.2) 0%, transparent 50%); pointer-events: none; z-index: -1; animation: meteor 20s linear infinite; }
+        @keyframes meteor { 0% { transform: translateX(-100%) translateY(-100%); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateX(100vw) translateY(100vh); opacity: 0; } }
+        header { background: rgba(0, 0, 0, 0.8); padding: 1rem 0; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        nav ul { list-style: none; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+        nav a { color: #e0e0e0; text-decoration: none; font-weight: bold; padding: 0.5rem 1rem; border-radius: 5px; transition: all 0.3s ease; }
+        nav a:hover { background: rgba(120,119,198,0.3); color: #fff; }
+        .back-btn { background: linear-gradient(45deg, #ff6b6b, #ff8e8e); color: #fff !important; box-shadow: 0 5px 15px rgba(255,107,107,0.4); }
+        .back-btn:hover { box-shadow: 0 10px 25px rgba(255,107,107,0.6); }
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background-image: url('https://images.unsplash.com/photo-1567353602694-6f9ef814e7f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80'); background-size: cover; background-position: center; background-attachment: fixed; position: relative; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); }
+        .hero-content { position: relative; z-index: 2; max-width: 900px; padding: 0 2rem; }
+        .hero h1 { font-size: 4rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); background: linear-gradient(45deg, #fff, #a0a0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow { from { filter: drop-shadow(0 0 5px #a0a0ff); } to { filter: drop-shadow(0 0 20px #a0a0ff); } }
+        section { padding: 6rem 2rem; max-width: 1200px; margin: 0 auto; }
+        h2 { font-size: 3rem; text-align: center; margin-bottom: 3rem; color: #fff; position: relative; }
+        h2::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 100px; height: 3px; background: linear-gradient(90deg, #a0a0ff, #fff); border-radius: 2px; }
+        .tool-container { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 2.5rem; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); margin: 2rem 0; }
+        input, button { padding: 1rem; margin: 0.5rem; border-radius: 10px; border: none; font-size: 1.1rem; }
+        input { background: rgba(0,0,0,0.5); color: #fff; width: 200px; }
+        button { background: linear-gradient(45deg, #4a4aff, #a0a0ff); color: #fff; cursor: pointer; transition: all 0.3s; box-shadow: 0 5px 15px rgba(74,74,255,0.4); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(74,74,255,0.6); }
+        #siderealOutput, #metarOutput, #mrcInfo { background: #000; color: #0f0; padding: 1.5rem; border-radius: 10px; font-family: 'Courier New', monospace; margin-top: 1rem; white-space: pre-wrap; max-height: 300px; overflow-y: auto; border: 1px solid #0f0; }
+        #terminal { animation: blink 1s infinite; }
+        @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0.3; } }
+        svg { max-width: 100%; height: auto; cursor: pointer; filter: drop-shadow(0 5px 15px rgba(160,160,255,0.5)); }
+        .city { fill: #4a4aff; stroke: #fff; stroke-width: 2; transition: all 0.3s; }
+        .city:hover { fill: #a0a0ff; transform: scale(1.1); }
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); }
+        .modal-content { background: rgba(255,255,255,0.1); margin: 15% auto; padding: 2rem; border-radius: 20px; width: 80%; max-width: 600px; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
+        .close { color: #fff; float: right; font-size: 2rem; font-weight: bold; cursor: pointer; }
+        .image-section { text-align: center; margin: 3rem 0; }
+        .image-section img { max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); transition: transform 0.3s; }
+        .image-section img:hover { transform: scale(1.05); }
+        .resources { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 4rem 0; }
+        .resource { background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 15px; text-align: center; transition: all 0.3s; }
+        .resource:hover { background: rgba(255,255,255,0.1); transform: translateY(-5px); }
+        .resource a { color: #a0a0ff; text-decoration: none; font-weight: bold; font-size: 1.1rem; }
+        .resource a:hover { color: #fff; }
+        @media (max-width: 768px) { .hero h1 { font-size: 2.8rem; } nav ul { gap: 1rem; } section { padding: 4rem 1rem; } }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="meteorII.html" class="back-btn">← Page 2</a></li>
+                <li><a href="meteorI.html">Page 1 ←</a></li>
+                <li><a href="#converter">Time Converter</a></li>
+                <li><a href="#dashboard">Telecom Dashboard</a></li>
+                <li><a href="#metar">METAR Terminal</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>The Interactive Weather Lab (The "How")</h1>
+            <p>Master data exchange and conversions central to modern meteorology (Units 3 & 5). Interactive tools simulate real-world telecom networks, time systems, and observation decoding.</p>
+            <p>From sidereal corrections for satellite timing to METAR parsing and regional center coordination, experience the digital backbone powering global weather prediction.</p>
+        </div>
+    </section>
+
+    <section id="intro">
+        <h2>Data Exchange in Meteorology</h2>
+        <p>The backbone of modern meteorology lies in seamless data exchange across global networks. Real-time satellite imagery, radiosonde profiles, and radar composites flow through dedicated telecom infrastructures, standardized by WMO protocols like GTS (Global Telecommunication System).</p>
+        <p>Time synchronization is paramount: solar clocks govern civil aviation while sidereal time governs celestial observations. METAR codes encapsulate hourly airport conditions in compact aviation-speak, parsed instantly by forecasting algorithms.</p>
+        <div class="image-section">
+            <img src="https://images.unsplash.com/photo-1567353602694-6f9ef814e7f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Weather satellite data network">
+            <p style="margin-top: 1rem; font-style: italic;">Global Meteorological Data Network | Source: Unsplash/NOAA</p>
+        </div>
+    </section>
+
+    <section id="converter">
+        <h2>Solar to Sidereal Time Converter</h2>
+        <p>Sidereal time lags solar time by approximately 3 minutes 56 seconds per day due to Earth's orbital motion. Astronomers and satellite operators use this correction for precise orbital predictions and stellar observations.</p>
+        <p>Input solar time (HH:MM:SS UTC) to compute corresponding sidereal time, essential for G-rib somesonde launches and radio occultation missions.</p>
+        <div class="tool-container">
+            <input type="text" id="solarInput" placeholder="Enter Solar Time (HH:MM:SS)" maxlength="8">
+            <button onclick="convertTime()">Convert to Sidereal</button>
+            <div id="siderealOutput"></div>
+        </div>
+    </section>
+
+    <section id="dashboard">
+        <h2>National Data Exchange Network Dashboard</h2>
+        <p>Mock interface simulating IMD's national telecom hub, aggregating data from 500+ observatories, Doppler radars, and INSAT satellites. Real systems employ dedicated fiber links with redundancy for cyclone warnings.</p>
+        <p>Visualize stream status, latency metrics, and data throughput typical of operational centers during monsoon onset.</p>
+        <div class="tool-container">
+            <button onclick="toggleDashboard()" id="dashBtn">Launch Dashboard</button>
+            <div id="dashboard" style="display:none;">
+                <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
+                    <div style="background:rgba(0,255,0,0.2); padding:1rem; border-radius:10px; min-width:150px;">INSAT-3D: 99.9% ↑</div>
+                    <div style="background:rgba(255,165,0,0.2); padding:1rem; border-radius:10px; min-width:150px;">Doppler Network: 98.2% ↑</div>
+                    <div style="background:rgba(0,191,255,0.2); padding:1rem; border-radius:10px; min-width:150px;">AWS: 97.6% ↑</div>
+                    <div style="background:rgba(255,0,0,0.2); padding:1rem; border-radius:10px; min-width:150px;">GTS Link: 100% ↑</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="metar">
+        <h2>METAR Terminal Emulator</h2>
+        <p>METAR (Meteorological Aerodrome Report) codes pack wind, visibility, clouds, temperature into concise strings for pilots. Click to "fetch" simulated report from randomized Indian airports.</p>
+        <p>Decode: VRB05KT 8000 FEW025 BKN100 28/20 Q1012 – light variable winds, 8km visibility, few clouds at 2500ft, etc.</p>
+        <div class="tool-container">
+            <button onclick="fetchMETAR()">Fetch Random METAR</button>
+            <div id="metarOutput" style="font-size:1.2em;"></div>
+        </div>
+    </section>
+
+
+    
+
+    <div class="resources">
+        <h3 style="grid-column: span 4; text-align: center; margin-bottom: 2rem; color: #fff;">Meteorological Resources</h3>
+        <div class="resource">
+            <a href="https://public.wmo.int/en/World-Weather-Watch" target="_blank">WMO World Weather Watch</a>
+        </div>
+        <div class="resource">
+            <a href="https://mausam.imd.gov.in/" target="_blank">IMD Real-time Data Portal</a>
+        </div>
+        <div class="resource">
+            <a href="https://www.aviationweather.gov/metar" target="_blank">NOAA Aviation METAR Decoder</a>
+        </div>
+        <div class="resource">
+            <a href="https://en.wikipedia.org/wiki/Sidereal_time" target="_blank">Sidereal Time Reference</a>
+        </div>
+        <div class="resource">
+            <a href="https://community.wmo.int/en/gts" target="_blank">GTS Network Details</a>
+        </div>
+        <div class="resource">
+            <a href="https://metoc.navy.mil/jtwg/ggmm/METAR.html" target="_blank">METAR Code Guide</a>
+        </div>
+    </div>
+
+    <!-- Modal for MRC info -->
+    <div id="mrcModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="mrcTitle"></h2>
+            <p id="mrcDetails"></p>
+        </div>
+    </div>
+
+    <script>
+        // Time Converter
+        function convertTime() {
+            const input = document.getElementById('solarInput').value;
+            const timeMatch = input.match(/(\d{2}):(\d{2}):(\d{2})/);
+            if (!timeMatch) return alert('Enter valid HH:MM:SS');
+            let [h, m, s] = timeMatch.slice(1).map(Number);
+            const siderealOffsetMs = 3*60*1000 + 56*1000 + 4*100; // 3m56s4ms per day
+            const totalMs = (((h*60 + m)*60 + s) * 1000 - siderealOffsetMs / 86400 * 86400000) % 86400000;
+            const nh = Math.floor(totalMs / 3600000).toString().padStart(2, '0');
+            const nm = Math.floor((totalMs % 3600000) / 60000).toString().padStart(2, '0');
+            const ns = Math.floor((totalMs % 60000) / 1000).toString().padStart(2, '0');
+            document.getElementById('siderealOutput').innerHTML = `Sidereal Time: ${nh}:${nm}:${ns} UTC`;
+        }
+
+        // Dashboard toggle
+        function toggleDashboard() {
+            const dash = document.getElementById('dashboard');
+            dash.style.display = dash.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Random METAR
+        const metars = [
+            'VABB 151230Z VRB03KT 9999 FEW025 BKN100 28/20 Q1012',
+            'VIDP 151245Z 25010KT 8000 FEW030 SCT080 32/22 Q1008 RMK VIS MIN 10',
+            'VOMM 151300Z 28015G25KT 6000 RA BR FEW020 BKN040CB 26/24 Q1010',
+            'VECC 151315Z 10005KT 4000 HZ NSC 30/26 Q1011'
+        ];
+        function fetchMETAR() {
+            const randomMetar = metars[Math.floor(Math.random() * metars.length)];
+            document.getElementById('metarOutput').innerHTML = `> Fetching METAR...\n> ${randomMetar}\n\nDecoded: Light winds, good visibility, scattered clouds. Terminal active.`;
+            document.getElementById('metarOutput').id = 'terminal';
+            setTimeout(() => document.getElementById('terminal').id = 'metarOutput', 1000);
+        }
+
+        // India Map interactives
+        document.querySelectorAll('.city').forEach(city => {
+            city.onclick = function() {
+                const mrc = this.dataset.mrc;
+                const details = {
+                    'New Delhi': 'Regional Meteorological Centre, New Delhi serves North India, HQ functions.',
+                    'Mumbai': 'RMC Mumbai - West Coast, Arabian Sea cyclones.',
+                    'Chennai': 'RMC Chennai - South Peninsula, Bay of Bengal.',
+                    'Kolkata': 'RMC Kolkata - East & Northeast.',
+                    'Hyderabad': 'RMC Hyderabad - Telangana & Rayalaseema.',
+                    'Nagpur': 'RMC Nagpur - Central India plateau.'
+                };
+                document.getElementById('mrcTitle').textContent = `${mrc} MRC`;
+                document.getElementById('mrcDetails').textContent = details[mrc];
+                document.getElementById('mrcModal').style.display = 'block';
+            };
+        });
+
+        function closeModal() {
+            document.getElementById('mrcModal').style.display = 'none';
+        }
+
+        window.onclick = function(e) {
+            if (e.target.classList.contains('modal')) closeModal();
+        }
+    </script>
+    <footer>&copy; 2024 The Pulse of the Sky. Interactive Meteorology Tools - Units 3 & 5.</footer>
+</body>
+</html>
